@@ -1,47 +1,73 @@
-seleccionadorbaloncestoTSK=function(altura,acierto){
-
-  bajo  = c(0, 0, 150, 165);
-  medio = c(150, 165, 170, 190);
-  alto  = c(170, 190, 300, 300);
+seleccionadorTrabajo=function(sueldo,distancia, dietas){
+  #todo
+  sueldoPrecario = c(0, 0, 700, 900);
+  sueldoBajo  = c(700, 900, 1300, 1500);
+  sueldoMedio = c(1300, 1500, 2000, 2200);
+  sueldoAlto  = c(2000, 2200, 3000, 3500);
+  sueldoEjecutivo = c(3000, 3500, 6000, 6000);
+  #todo
+  distanciaCerca    = c(0, 0, 10, 15);
+  distanciaMedia = c(10, 15, 25, 30);
+  distanciaLejos   = c(25, 30, 50, 50);
   
-  malo    = c(0, 0, 40, 55);
-  regular = c(40, 55, 65, 90);
-  bueno   = c(65, 90, 110, 110);
+  dietasInexistentes = c(0, 0, 5, 7);
+  dietasCasiInexistentes = c (5, 7, 8, 10);
+  dietasMedias = c(8,10, 13, 15);
+  dietasElevadas = c(13, 15, 20, 25);
   
   seleccionar          = 100;
+  seleccionarCasiSeguro = 90;
   seleccionarcodudas   = 75;
   dudoso               = 50;
   masbiennoseleccionar = 25;
   noseleccionar        = 0;
   
-  mu_bajo  = calcula_Mu(bajo,altura);
-  mu_medio = calcula_Mu(medio,altura);
-  mu_alto  = calcula_Mu(alto,altura);
+  mu_sueldoPrecario = calcula_Mu(sueldoPrecario, sueldo);
+  mu_sueldoBajo  = calcula_Mu(sueldoBajo,sueldo);
+  mu_sueldoMedio = calcula_Mu(sueldoMedio,sueldo);
+  mu_sueldoAlto  = calcula_Mu(sueldoAlto,sueldo);
+  mu_sueldoEjecutivo = calcula_Mu(sueldoEjecutivo, sueldo);
   
-  mu_malo    = calcula_Mu(malo,acierto);
-  mu_regular = calcula_Mu(regular,acierto);
-  mu_bueno   = calcula_Mu(bueno,acierto);
+  mu_distanciaCerca = calcula_Mu(distanciaCerca,distancia);
+  mu_distanciaMedia = calcula_Mu(distanciaMedia,distancia);
+  mu_distanciaLejos = calcula_Mu(distanciaLejos,distancia);
   
-  basereglas = matrix(c(Y(mu_bajo,mu_malo),noseleccionar,
-                        Y(mu_bajo,mu_regular),masbiennoseleccionar,
-                        Y(mu_bajo,mu_bueno),dudoso,
-                        Y(mu_medio,mu_malo),masbiennoseleccionar,
-                        Y(mu_medio,mu_regular),dudoso,
-                        Y(mu_medio,mu_bueno),seleccionarcodudas,
-                        Y(mu_alto,mu_malo),dudoso,
-                        Y(mu_alto,mu_regular),seleccionarcodudas,
-                        Y(mu_alto,mu_bueno),seleccionar),nrow=9,ncol=2,byrow=TRUE)
+  mu_dietasInexistentes = calcula_Mu(dietasInexistentes, dietas);
+  mu_dietasCasiInexistentes = calcula_Mu(dietasCasiInexistentes, dietas);
+  mu_dietasMedias = calcula_Mu(dietasMedias, dietas);
+  mu_dietasElevadas = calcula_Mu(dietasElevadas, dietas);
+  
+  #todo
+  basereglas = matrix(c(Y(mu_sueldoPrecario, 1, 1),noseleccionar,
+                        Y(mu_sueldoBajo, mu_distanciaLejos, 1), noseleccionar,
+                        Y(mu_sueldoBajo, mu_distanciaMedia, 1), masbiennoseleccionar,
+                        Y(mu_sueldoBajo, mu_distanciaCerca, 1), dudoso,
+                        Y(mu_sueldoMedio, mu_distanciaLejos, mu_dietasInexistentes), masbiennoseleccionar,
+                        Y(mu_sueldoMedio, mu_distanciaLejos, mu_dietasCasiInexistentes), masbiennoseleccionar,
+                        Y(mu_sueldoMedio, mu_distanciaLejos, mu_dietasMedias), dudoso,
+                        Y(mu_sueldoMedio, mu_distanciaLejos, mu_dietasElevadas), seleccionarcodudas,
+                        Y(mu_sueldoMedio, mu_distanciaMedia, 1), dudoso,
+                        Y(mu_sueldoMedio, mu_distanciaCerca, 1), seleccionarcodudas,
+                        Y(mu_sueldoAlto, mu_distanciaLejos, 1), dudoso,
+                        Y(mu_sueldoAlto, mu_distanciaMedia, 1), seleccionarcodudas,
+                        Y(mu_sueldoAlto, mu_distanciaCerca, 1), seleccionarCasiSeguro,
+                        Y(mu_sueldoEjecutivo, mu_distanciaLejos, 1), seleccionarcodudas,
+                        Y(mu_sueldoEjecutivo, mu_distanciaMedia, 1), seleccionarCasiSeguro,
+                        Y(mu_sueldoEjecutivo, mu_distanciaCerca, 1), seleccionar
+
+                        ),nrow=16,ncol=2,byrow=TRUE);
  
   
   antecedentes = basereglas[,1];
   consecuentes = basereglas[,2];
   
   salida = sum(antecedentes*consecuentes)/sum(antecedentes);
-  print(paste0('Jugador con Altura=',altura,' y Acierto=',acierto,' -> Seleccionar=',salida))
+  print(paste0('Trabajo con sueldo=',sueldo,'???, distancia=',distancia,'km y euros en dietas=', dietas, ' -> Seleccionar=',salida, '%'))
 }
 
-Y = function(valor1,valor2){
-  salida = min(valor1,valor2);
+Y = function(valor1,valor2, valor3){
+  primerValor = min(valor1,valor2);
+  salida = min(primerValor, valor3);
 }
 
 calcula_Mu = function(difuso,valor){
