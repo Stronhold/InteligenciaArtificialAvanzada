@@ -1,11 +1,11 @@
 seleccionadorTrabajo=function(sueldo,distancia, dietas){
-  #todo
+
   sueldoPrecario = c(0, 0, 700, 900);
   sueldoBajo  = c(700, 900, 1300, 1500);
   sueldoMedio = c(1300, 1500, 2000, 2200);
   sueldoAlto  = c(2000, 2200, 3000, 3500);
   sueldoEjecutivo = c(3000, 3500, 6000, 6000);
-  #todo
+
   distanciaCerca    = c(0, 0, 10, 15);
   distanciaMedia = c(10, 15, 25, 30);
   distanciaLejos   = c(25, 30, 50, 50);
