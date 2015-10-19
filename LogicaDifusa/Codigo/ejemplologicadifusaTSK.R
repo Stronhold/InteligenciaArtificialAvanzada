@@ -37,7 +37,6 @@ seleccionadorTrabajo=function(sueldo,distancia, dietas){
   mu_dietasMedias = calcula_Mu(dietasMedias, dietas);
   mu_dietasElevadas = calcula_Mu(dietasElevadas, dietas);
   
-  #todo
   basereglas = matrix(c(Y(mu_sueldoPrecario, 1, 1),noseleccionar,
                         Y(mu_sueldoBajo, mu_distanciaLejos, 1), noseleccionar,
                         Y(mu_sueldoBajo, mu_distanciaMedia, 1), masbiennoseleccionar,
