@@ -13,7 +13,7 @@ seleccionadorTrabajo=function(sueldo,distancia, dietas){
   dietasInexistentes = c(0, 0, 5, 7);
   dietasCasiInexistentes = c (5, 7, 8, 10);
   dietasMedias = c(8,10, 13, 15);
-  dietasElevadas = c(13, 15, 20, 25);
+  dietasElevadas = c(13, 15, 25, 25);
   
   seleccionar          = 100;
   seleccionarCasiSeguro = 90;
@@ -97,3 +97,4 @@ calcula_Mu = function(difuso,valor){
     }
   }
 }
+
