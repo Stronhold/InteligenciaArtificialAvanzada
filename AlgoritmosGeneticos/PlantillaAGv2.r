@@ -32,41 +32,78 @@ PlantillaAGv2=function(){
   #Permutacion
   for(i in 1:N_INDIVIDUOS){
     for (j in 1:L_INDIVIDUO){
-      integer = sample(1:L_INDIVIDUO, 1);
-      numeroPermutacionUno = POBLACION[i, integer];
-      POBLACION[i,integer] = POBLACION[i,j];
+      random = sample(1:L_INDIVIDUO, 1);
+      numeroPermutacionUno = POBLACION[i, random];
+      POBLACION[i,random] = POBLACION[i,j];
       POBLACION[i, j] = numeroPermutacionUno
     }
   }
-  print(POBLACION)
+  print(POBLACION);
   
   for (g in 1:GENERACIONES){
     # EVALUACIÓN (No Tocar)
     FITNESS = Evaluar(POBLACION,DISTANCIAS);      
-    
+    print(FITNESS);
     # SELECCIÓN 
     #Seleccionar N_INDIVIDUOS padres por torneo binario
-    PADRES = POBLACION;     
+    PADRES = POBLACION;   
+    for(i in 1:N_INDIVIDUOS){
+      numeroCandidatoUno = sample(1:N_INDIVIDUOS, 1);
+      numeroCandidatoDos = sample(1:N_INDIVIDUOS, 1);
+      candidatoUno = POBLACION[numeroCandidatoUno];
+      candidatoDos = POBLACION[numeroCandidatoDos];
+      fitnessUno = FITNESS[candidatoUno];
+      fitnessDos = FITNESS[candidatoDos];
+      if(fitnessUno < fitnessDos){
+        for (j in 1:L_INDIVIDUO){
+        PADRES[i, j]=POBLACION[numeroCandidatoUno, j];
+        }
+      }
+      else{
+        for (j in 1:L_INDIVIDUO){
+          PADRES[i, j]=POBLACION[numeroCandidatoDos, j];
+          
+        }
+      }
+    }
+    print(PADRES);
     
     # CRUCE 
     #Para cada pareja de padres, usar el operador de orden con probabilidad
     # PROB_CRUCE para generar dos hijos
     HIJOS = PADRES;    
+    for(i in 1:N_INDIVIDUOS){
+      runif(1, min=0, max=1);
+    }
     
     # MUTACIÓN  
     #Para cada hijo, con probabilidad PROB_MUTACION, intercambiar dos 
     #posiciones elegidas aleatoriamente
-    
-    
+    for (i in 1:N_INDIVIDUOS){
+      if (runif(1, min=0, max=1)<PROB_MUTACION){
+        randomUno = sample(1:L_INDIVIDUO, 1);
+        randomDos = 0;
+        samePosition = T;
+        while(samePosition){
+          randomDos = sample(1:L_INDIVIDUO, 1);
+          if(randomDos != randomUno){
+            samePosition = F;
+          }
+        }
+        numeroPermutacionUno = HIJOS[i, randomUno];
+        HIJOS[i,randomUno] = HIJOS[i,randomDos];
+        HIJOS[i, randomDos] = numeroPermutacionUno;
+      }
+    }
     # ACTUALIZAMOS EL MEJOR INDIVIDUO (No Tocar)
     indice = order(FITNESS)[1];
     MEJOR = POBLACION[indice,];
     fitness_mejor = FITNESS[indice];
     
     # MOSTRAMOS EL MEJOR INDIVIDUO HASTA EL MOMENTO (No Tocar)
-   # print(paste0('Mejor Individuo Generación: ',g))
-    #print(MEJOR)
-    #print(paste0('Fitness del Mejor Individuo: ',fitness_mejor))
+ #   print(paste0('Mejor Individuo Generación: ',g))
+  #  print(MEJOR)
+   # print(paste0('Fitness del Mejor Individuo: ',fitness_mejor))
     
     # REEMPLAZAMIENTO (No Tocar)
     POBLACION = HIJOS;
