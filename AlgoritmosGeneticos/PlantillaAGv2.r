@@ -47,14 +47,14 @@ PlantillaAGv2=function(){
     # SELECCIÓN 
     #Seleccionar N_INDIVIDUOS padres por torneo binario
     PADRES = POBLACION;   
+    print(FITNESS);
+    return;
     for(i in 1:N_INDIVIDUOS){
       numeroCandidatoUno = sample(1:N_INDIVIDUOS, 1);
       numeroCandidatoDos = sample(1:N_INDIVIDUOS, 1);
-      candidatoUno = POBLACION[numeroCandidatoUno];
-      candidatoDos = POBLACION[numeroCandidatoDos];
-      fitnessUno = FITNESS[candidatoUno];
-      fitnessDos = FITNESS[candidatoDos];
-      if(fitnessUno < fitnessDos){
+      fitnessUno = FITNESS[numeroCandidatoUno];
+      fitnessDos = FITNESS[numeroCandidatoDos];
+      if((fitnessUno < fitnessDos)){
         for (j in 1:L_INDIVIDUO){
         PADRES[i, j]=POBLACION[numeroCandidatoUno, j];
         }
@@ -62,20 +62,58 @@ PlantillaAGv2=function(){
       else{
         for (j in 1:L_INDIVIDUO){
           PADRES[i, j]=POBLACION[numeroCandidatoDos, j];
-          
         }
       }
     }
-    print(PADRES);
-    
+    print("cruce");
     # CRUCE 
     #Para cada pareja de padres, usar el operador de orden con probabilidad
     # PROB_CRUCE para generar dos hijos
     HIJOS = PADRES;    
     for(i in 1:N_INDIVIDUOS){
-      runif(1, min=0, max=1);
+      if(runif(1, min=0, max=1) < PROB_CRUCE){
+        s = sample(1:N_INDIVIDUOS, 1);
+        t = sample(1:N_INDIVIDUOS, 1);
+        if(s>t){
+          aux=s;
+          s=t;
+          t=aux;
+        }
+        t1p1=PADRES[i,1:s-1];
+        t2p1=PADRES[i,s:t];
+        t3p1=PADRES[i,t+1:length(PADRES[i])];
+        t1p2=PADRES[i+1,1:s-1];
+        t2p2=PADRES[i+1,s:t];
+        t3p2=PADRES[i+1,t+1:length(PADRES[i])];
+        HIJO1=t2p1;
+        ORDEN= c (t3p2,t1p2,t2p2);
+        ORDEN= ORDEN[! ORDEN %in% t2p1];
+        HIJO1=c(HIJO1,ORDEN);
+        SIZEt1p1= length(t1p1);
+        MOVER=HIJO1[length(HIJO1)-(SIZEt1p1-1):length(HIJO1)];
+        diferencia = (length(HIJO1) - SIZEt1p1)
+        HIJO1=HIJO1[1:diferencia];
+        HIJO1=c(MOVER,HIJO1);
+        for (j in 1:L_INDIVIDUO){
+          HIJOS[i, j]=HIJO1[j];
+        }
+        
+        HIJO2=t2p2;
+        ORDEN=c(t3p1,t1p1,t2p1);
+        ORDEN= ORDEN[! ORDEN %in% t2p1];
+        HIJO2=c(HIJO2,ORDEN);
+        SIZEt1p2=length(t1p2);
+        MOVER=HIJO2[length(HIJO2)-(SIZEt1p2-1):length(HIJO2)];
+        diferencia  = length(HIJO2)-SIZEt1p2;
+        HIJO2=HIJO2[1: diferencia];
+        HIJO2=c(MOVER,HIJO2);
+        for (j in 1:L_INDIVIDUO){
+          HIJOS[i, j]=HIJO2[j];
+        }
+        i = i +1;
+      }
     }
-    
+    print("Mutacion");
     # MUTACIÓN  
     #Para cada hijo, con probabilidad PROB_MUTACION, intercambiar dos 
     #posiciones elegidas aleatoriamente
