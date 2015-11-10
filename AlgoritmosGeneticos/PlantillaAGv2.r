@@ -38,16 +38,13 @@ PlantillaAGv2=function(){
       POBLACION[i, j] = numeroPermutacionUno
     }
   }
-  print(POBLACION);
   
   for (g in 1:GENERACIONES){
     # EVALUACIÓN (No Tocar)
     FITNESS = Evaluar(POBLACION,DISTANCIAS);      
-    print(FITNESS);
     # SELECCIÓN 
     #Seleccionar N_INDIVIDUOS padres por torneo binario
     PADRES = POBLACION;   
-    print(FITNESS);
     return;
     for(i in 1:N_INDIVIDUOS){
       numeroCandidatoUno = sample(1:N_INDIVIDUOS, 1);
@@ -65,53 +62,76 @@ PlantillaAGv2=function(){
         }
       }
     }
-    print("cruce");
     # CRUCE 
     #Para cada pareja de padres, usar el operador de orden con probabilidad
     # PROB_CRUCE para generar dos hijos
     HIJOS = PADRES;    
     for(i in 1:N_INDIVIDUOS){
-      if(runif(1, min=0, max=1) < PROB_CRUCE){
-        s = sample(1:N_INDIVIDUOS, 1);
-        t = sample(1:N_INDIVIDUOS, 1);
-        if(s>t){
-          aux=s;
-          s=t;
-          t=aux;
-        }
-        t1p1=PADRES[i,1:s-1];
-        t2p1=PADRES[i,s:t];
-        t3p1=PADRES[i,t+1:length(PADRES[i])];
-        t1p2=PADRES[i+1,1:s-1];
-        t2p2=PADRES[i+1,s:t];
-        t3p2=PADRES[i+1,t+1:length(PADRES[i])];
-        HIJO1=t2p1;
-        ORDEN= c (t3p2,t1p2,t2p2);
-        ORDEN= ORDEN[! ORDEN %in% t2p1];
-        HIJO1=c(HIJO1,ORDEN);
-        SIZEt1p1= length(t1p1);
-        MOVER=HIJO1[length(HIJO1)-(SIZEt1p1-1):length(HIJO1)];
-        diferencia = (length(HIJO1) - SIZEt1p1)
-        HIJO1=HIJO1[1:diferencia];
-        HIJO1=c(MOVER,HIJO1);
-        for (j in 1:L_INDIVIDUO){
-          HIJOS[i, j]=HIJO1[j];
-        }
-        
-        HIJO2=t2p2;
-        ORDEN=c(t3p1,t1p1,t2p1);
-        ORDEN= ORDEN[! ORDEN %in% t2p1];
-        HIJO2=c(HIJO2,ORDEN);
-        SIZEt1p2=length(t1p2);
-        MOVER=HIJO2[length(HIJO2)-(SIZEt1p2-1):length(HIJO2)];
-        diferencia  = length(HIJO2)-SIZEt1p2;
-        HIJO2=HIJO2[1: diferencia];
-        HIJO2=c(MOVER,HIJO2);
-        for (j in 1:L_INDIVIDUO){
-          HIJOS[i, j]=HIJO2[j];
-        }
-        i = i +1;
+      if(i + 1 <= 50){
+        if(runif(1, min=0, max=1) < PROB_CRUCE){
+          s = sample(1:N_INDIVIDUOS, 1);
+          t = sample(1:N_INDIVIDUOS, 1);
+          PADREUNO = PADRES[i,];
+          PADREDOS = PADRES[i+1,];
+          if(s>t){
+            aux=s;
+            s=t;
+            t=aux;
+          }
+          t1p1=PADREUNO[1:s-1];
+          t2p1=PADREUNO[s:t];
+          t3p1=PADREUNO[t +1:(length(PADRES[i,]) - t )];
+          t1p2=PADREDOS[1:s-1];
+          t2p2=PADREDOS[s:t];
+          t3p2=PADREDOS[t +1:(length(PADRES[i,]) - t )];
+          trozoCompleto2 = c(t3p2, t1p2);
+          trozoCompleto2 = trozoCompleto2[!trozoCompleto2 %in% t2p1];
+          trozoCompleto1 = c(t3p1, t1p1);
+          trozoCompleto1 = trozoCompleto1[!trozoCompleto1 %in% trozoCompleto2];
+          trozoCompletoHijo1 = c(trozoCompleto2, trozoCompleto1);
+          HIJO1 = t2p1;
+          k = t + 1;
+          l = 0;
+          for(j in 1:length(trozoCompletoHijo1)){
+ 
+            if(k < length(trozoCompletoHijo1)){
+              HIJO1 = c(HIJO1, trozoCompletoHijo1[j]);
+            }
+            else{
+              HIJO1 = c(trozoCompletoHijo1[length(trozoCompletoHijo1) - l], HIJO1);
+              l = l + 1;
+            }
+            k = k + 1;
+          }
+          for (j in 1:L_INDIVIDUO){
+            HIJOS[i, j]=HIJO1[j];
+          }
+          
+          trozoCompleto2 = c(t3p1, t1p1);
+          trozoCompleto2 = trozoCompleto2[!trozoCompleto2 %in% t2p2];
+          trozoCompleto1 = c(t3p2, t1p2);
+          trozoCompleto1 = trozoCompleto1[!trozoCompleto1 %in% trozoCompleto2];
+          trozoCompletoHijo1 = c(trozoCompleto2, trozoCompleto1);
+          HIJO2 = t2p2;
+          k = t + 1;
+          l = 0;
+          for(j in 1:length(trozoCompletoHijo1)){
+            
+            if(k < length(trozoCompletoHijo1)){
+              HIJO2 = c(HIJO2, trozoCompletoHijo1[j]);
+            }
+            else{
+              HIJO2 = c(trozoCompletoHijo1[length(trozoCompletoHijo1) - l], HIJO2);
+              l = l + 1;
+            }
+            k = k + 1;
+          }
+          for (j in 1:L_INDIVIDUO){
+            HIJOS[i, j]=HIJO2[j];
+          }
+         }
       }
+      i = i +1;
     }
     print("Mutacion");
     # MUTACIÓN  
@@ -139,9 +159,9 @@ PlantillaAGv2=function(){
     fitness_mejor = FITNESS[indice];
     
     # MOSTRAMOS EL MEJOR INDIVIDUO HASTA EL MOMENTO (No Tocar)
- #   print(paste0('Mejor Individuo Generación: ',g))
-  #  print(MEJOR)
-   # print(paste0('Fitness del Mejor Individuo: ',fitness_mejor))
+    print(paste0('Mejor Individuo Generación: ',g))
+    print(MEJOR)
+    print(paste0('Fitness del Mejor Individuo: ',fitness_mejor))
     
     # REEMPLAZAMIENTO (No Tocar)
     POBLACION = HIJOS;
