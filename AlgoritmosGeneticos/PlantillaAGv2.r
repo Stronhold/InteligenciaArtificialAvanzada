@@ -3,8 +3,8 @@ setwd('C:\\Users\\Sergio\\Documents\\github\\InteligenciaArtificialAvanzada\\Alg
 
 PlantillaAGv2=function(){
   # LEEMOS LAS POSICIONES DE REPARTO, Y CALCULAMOS LAS DISTANCIAS (No Tocar)
-  PROBLEMA = 'berlin52.txt';
-  SOLUCION = 'berlin52.opt.txt';
+  PROBLEMA = 'bayg29.txt';
+  SOLUCION = 'bayg29.opt.txt';
   PUNTOS = read.table(PROBLEMA);
   OPTIMO = read.table(SOLUCION);
   N = dim(PUNTOS)[1];
@@ -45,9 +45,9 @@ PlantillaAGv2=function(){
     # SELECCIÓN 
     #Seleccionar N_INDIVIDUOS padres por torneo binario
     PADRES = POBLACION;   
-    return;
     for(i in 1:N_INDIVIDUOS){
       numeroCandidatoUno = sample(1:N_INDIVIDUOS, 1);
+      
       numeroCandidatoDos = sample(1:N_INDIVIDUOS, 1);
       fitnessUno = FITNESS[numeroCandidatoUno];
       fitnessDos = FITNESS[numeroCandidatoDos];
@@ -67,12 +67,13 @@ PlantillaAGv2=function(){
     # PROB_CRUCE para generar dos hijos
     HIJOS = PADRES;    
     for(i in 1:N_INDIVIDUOS){
-      if(i + 1 <= 50){
+      if(i + 1 <= N_INDIVIDUOS){
         if(runif(1, min=0, max=1) < PROB_CRUCE){
-          s = sample(1:N_INDIVIDUOS, 1);
-          t = sample(1:N_INDIVIDUOS, 1);
+          s = sample(2:L_INDIVIDUO-1, 1);
+          t = sample(2:L_INDIVIDUO-1, 1);
           PADREUNO = PADRES[i,];
           PADREDOS = PADRES[i+1,];
+  
           if(s>t){
             aux=s;
             s=t;
@@ -85,10 +86,10 @@ PlantillaAGv2=function(){
           t2p2=PADREDOS[s:t];
           t3p2=PADREDOS[t +1:(length(PADRES[i,]) - t )];
           trozoCompleto2 = c(t3p2, t1p2);
-          trozoCompleto2 = trozoCompleto2[!trozoCompleto2 %in% t2p1];
+          trozoCompleto2Eliminado = trozoCompleto2[!trozoCompleto2 %in% t2p1];
           trozoCompleto1 = c(t3p1, t1p1);
-          trozoCompleto1 = trozoCompleto1[!trozoCompleto1 %in% trozoCompleto2];
-          trozoCompletoHijo1 = c(trozoCompleto2, trozoCompleto1);
+          trozoCompleto1Eliminado = trozoCompleto1[!trozoCompleto1 %in% trozoCompleto2Eliminado];
+          trozoCompletoHijo1 = c(trozoCompleto2Eliminado, trozoCompleto1Eliminado);
           HIJO1 = t2p1;
           k = t + 1;
           l = 0;
@@ -115,6 +116,8 @@ PlantillaAGv2=function(){
           HIJO2 = t2p2;
           k = t + 1;
           l = 0;
+   
+
           for(j in 1:length(trozoCompletoHijo1)){
             
             if(k < length(trozoCompletoHijo1)){
@@ -133,7 +136,6 @@ PlantillaAGv2=function(){
       }
       i = i +1;
     }
-    print("Mutacion");
     # MUTACIÓN  
     #Para cada hijo, con probabilidad PROB_MUTACION, intercambiar dos 
     #posiciones elegidas aleatoriamente
