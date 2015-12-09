@@ -3,8 +3,8 @@ setwd('C:\\Users\\Sergio\\Documents\\github\\InteligenciaArtificialAvanzada\\Alg
 
 PlantillaAGv2=function(){
   # LEEMOS LAS POSICIONES DE REPARTO, Y CALCULAMOS LAS DISTANCIAS (No Tocar)
-  PROBLEMA = 'bayg29.txt';
-  SOLUCION = 'bayg29.opt.txt';
+  PROBLEMA = 'berlin52.txt';
+  SOLUCION = 'berlin52.opt.txt';
   PUNTOS = read.table(PROBLEMA);
   OPTIMO = read.table(SOLUCION);
   N = dim(PUNTOS)[1];
@@ -17,7 +17,7 @@ PlantillaAGv2=function(){
   # PARÁMETROS
   N_INDIVIDUOS  = 50;
   L_INDIVIDUO   = N;
-  GENERACIONES  = 200;
+  GENERACIONES  = 100000;
   PROB_MUTACION = 0.05;
   PROB_CRUCE    = 0.90;
   # INICIALIZACIÓN
