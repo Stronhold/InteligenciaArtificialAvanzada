@@ -1,2 +1,2 @@
 # InteligenciaArtificialAvanzada
-Añadido proyecto de IA, chino trabaja
+Añadido proyecto de IA
